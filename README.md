@@ -1,0 +1,1 @@
+# FlareGet.AppImage

@@ -1,0 +1,9 @@
+[Desktop Entry]
+Name=FlareGet
+Comment=flareGet is a full featured multi-threaded and multisegment download manager
+Exec=AppRun
+Icon=flareget
+Terminal=false
+X-MultipleArgs=false
+Type=Application
+Categories=Network;
