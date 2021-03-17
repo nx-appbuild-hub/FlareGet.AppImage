@@ -22,18 +22,6 @@ all: clean
 	wget --output-document=$(PWD)/build/build.deb https://dl.flareget.com/downloads/files/flareget/debs/amd64/flareget_5.0-1_amd64.deb
 	dpkg -x $(PWD)/build/build.deb $(PWD)/build
 
-	# wget --output-document=build.rpm http://mirror.centos.org/centos/7/os/x86_64/Packages/openssl-libs-1.0.2k-19.el7.x86_64.rpm
-	# rpm2cpio build.rpm | cpio -idmv
-
-	# wget --output-document=build.rpm http://mirror.centos.org/centos/7/os/x86_64/Packages/libicu-50.2-3.el7.x86_64.rpm
-	# rpm2cpio build.rpm | cpio -idmv
-
-	# wget --output-document=build.rpm http://mirror.centos.org/centos/7/os/x86_64/Packages/pcre2-utf16-10.23-2.el7.x86_64.rpm
-	# rpm2cpio build.rpm | cpio -idmv
-
-	# wget --output-document=build.rpm http://mirror.centos.org/centos/7/os/x86_64/Packages/libxcb-1.13-1.el7.x86_64.rpm
-	# rpm2cpio build.rpm | cpio -idmv
-
 	cp -r $(PWD)/build/usr/bin/* 		$(PWD)/build/Boilerplate.AppDir/bin
 	cp -r $(PWD)/build/usr/lib/* 		$(PWD)/build/Boilerplate.AppDir/lib64
 	cp -r $(PWD)/build/usr/share/* 		$(PWD)/build/Boilerplate.AppDir/share
