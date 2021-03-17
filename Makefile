@@ -1,67 +1,57 @@
-# This software is a part of the A.O.D apprepo project
-# Copyright 2015 Alex Woroschilow (alex.woroschilow@gmail.com)
+
+# Copyright 2020 Alex Woroschilow (alex.woroschilow@gmail.com)
 #
-# This program is free software; you can redistribute it and/or
-# modify it under the terms of the GNU General Public License
-# as published by the Free Software Foundation; either version 2
-# of the License, or (at your option) any later version.
+# Licensed under the Apache License, Version 2.0 (the "License");
+# you may not use this file except in compliance with the License.
+# You may obtain a copy of the License at
 #
-# This program is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
+# http://www.apache.org/licenses/LICENSE-2.0
 #
-# You should have received a copy of the GNU General Public License
-# along with this program; if not, write to the Free Software
-# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
-SOURCE="https://dl.flareget.com/downloads/files/flareget/debs/amd64/flareget_5.0-1_amd64.deb"
-DESTINATION="build.deb"
-OUTPUT="FlareGet.AppImage"
+# Unless required by applicable law or agreed to in writing, software
+# distributed under the License is distributed on an "AS IS" BASIS,
+# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+PWD:=$(shell pwd)
 
 
-all:
-	echo "Building: $(OUTPUT)"
-	wget --output-document=$(DESTINATION) --continue $(SOURCE)
+all: clean
+	mkdir -p $(PWD)/build/Boilerplate.AppDir
+	apprepo --destination=$(PWD)/build appdir boilerplate libpng16-16 libqt5printsupport5 libqt5widgets5 libqt5qml5 libqt5network5 \
+												libqt5gui5 libqt5core5a libqt5quick5 libqt5xml5 libqt5sql5 libqt5dbus5 libqt5multimedia5 libqt5x11extras5
 
-	dpkg -x $(DESTINATION) build
-	rm -rf AppDir/opt
 
-	wget --output-document=build.rpm http://mirror.centos.org/centos/7/os/x86_64/Packages/qt5-qtbase-gui-5.9.7-2.el7.x86_64.rpm
-	rpm2cpio build.rpm | cpio -idmv
+	wget --output-document=$(PWD)/build/build.deb https://dl.flareget.com/downloads/files/flareget/debs/amd64/flareget_5.0-1_amd64.deb
+	dpkg -x $(PWD)/build/build.deb $(PWD)/build
 
-	wget --output-document=build.rpm http://mirror.centos.org/centos/7/os/x86_64/Packages/qt5-qtbase-5.9.7-2.el7.x86_64.rpm
-	rpm2cpio build.rpm | cpio -idmv
+	# wget --output-document=build.rpm http://mirror.centos.org/centos/7/os/x86_64/Packages/openssl-libs-1.0.2k-19.el7.x86_64.rpm
+	# rpm2cpio build.rpm | cpio -idmv
 
-	wget --output-document=build.rpm http://mirror.centos.org/centos/7/os/x86_64/Packages/libpng-1.5.13-7.el7_2.x86_64.rpm
-	rpm2cpio build.rpm | cpio -idmv
+	# wget --output-document=build.rpm http://mirror.centos.org/centos/7/os/x86_64/Packages/libicu-50.2-3.el7.x86_64.rpm
+	# rpm2cpio build.rpm | cpio -idmv
 
-	wget --output-document=build.rpm http://mirror.centos.org/centos/7/os/x86_64/Packages/openssl-libs-1.0.2k-19.el7.x86_64.rpm
-	rpm2cpio build.rpm | cpio -idmv
+	# wget --output-document=build.rpm http://mirror.centos.org/centos/7/os/x86_64/Packages/pcre2-utf16-10.23-2.el7.x86_64.rpm
+	# rpm2cpio build.rpm | cpio -idmv
 
-	wget --output-document=build.rpm http://mirror.centos.org/centos/7/os/x86_64/Packages/libicu-50.2-3.el7.x86_64.rpm
-	rpm2cpio build.rpm | cpio -idmv
+	# wget --output-document=build.rpm http://mirror.centos.org/centos/7/os/x86_64/Packages/libxcb-1.13-1.el7.x86_64.rpm
+	# rpm2cpio build.rpm | cpio -idmv
 
-	wget --output-document=build.rpm http://mirror.centos.org/centos/7/os/x86_64/Packages/pcre2-utf16-10.23-2.el7.x86_64.rpm
-	rpm2cpio build.rpm | cpio -idmv
+	cp -r $(PWD)/build/usr/bin/* 		$(PWD)/build/Boilerplate.AppDir/bin
+	cp -r $(PWD)/build/usr/lib/* 		$(PWD)/build/Boilerplate.AppDir/lib64
+	cp -r $(PWD)/build/usr/share/* 		$(PWD)/build/Boilerplate.AppDir/share
 
-	wget --output-document=build.rpm http://mirror.centos.org/centos/7/os/x86_64/Packages/libxcb-1.13-1.el7.x86_64.rpm
-	rpm2cpio build.rpm | cpio -idmv
+	echo '' >> $(PWD)/build/Boilerplate.AppDir/AppRun
+	echo '' >> $(PWD)/build/Boilerplate.AppDir/AppRun
+	echo 'exec $${APPDIR}/bin/flareget $${@}' >> $(PWD)/build/Boilerplate.AppDir/AppRun
 
-	mkdir --parents AppDir/application
-	mkdir --parents AppDir/application/platforms
-	mkdir --parents AppDir/lib
-	cp -r build/usr/bin/* AppDir/application
-	cp -r ./usr/lib64/* AppDir/lib
-	cp -r ./usr/lib64/qt5/plugins/platforms/* AppDir/application/platforms
+	rm -f $(PWD)/build/Boilerplate.AppDir/*.desktop 	| true
+	rm -f $(PWD)/build/Boilerplate.AppDir/*.png 		| true
+	rm -f $(PWD)/build/Boilerplate.AppDir/*.svg 		| true	
 
-	chmod +x AppDir/AppRun
+	cp --force $(PWD)/AppDir/*.svg 		$(PWD)/build/Boilerplate.AppDir 			| true	
+	cp --force $(PWD)/AppDir/*.desktop 	$(PWD)/build/Boilerplate.AppDir 			| true	
+	cp --force $(PWD)/AppDir/*.png 		$(PWD)/build/Boilerplate.AppDir 			| true	
 
-	export ARCH=x86_64 && bin/appimagetool.AppImage AppDir $(OUTPUT)
-	chmod +x $(OUTPUT)
+	export ARCH=x86_64 && $(PWD)/bin/appimagetool.AppImage $(PWD)/build/Boilerplate.AppDir $(PWD)/FlareGet.AppImage
+	chmod +x $(PWD)/FlareGet.AppImage
 
-	rm -f *.rpm *.deb *.zip
-	rm -rf AppDir/application
-	rm -rf AppDir/lib
-	rm -rf build
-	rm -rf usr
-	rm -rf etc
+clean:
+	rm -rf $(PWD)/build
